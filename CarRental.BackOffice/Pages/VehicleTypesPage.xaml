@@ -1,0 +1,37 @@
+<Page x:Class="CarRental.BackOffice.Pages.VehicleTypesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Vehicle Types">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Vehicle Types Management" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Add New Type" Click="AddButton_Click" Margin="20,0,0,0" Padding="10,5"/>
+            <Button Content="Refresh" Click="RefreshButton_Click" Margin="10,0,0,0" Padding="10,5"/>
+        </StackPanel>
+        
+        <DataGrid x:Name="VehicleTypesDataGrid" Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  SelectionChanged="VehicleTypesDataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                <DataGridTextColumn Header="Daily Rate" Binding="{Binding DailyRate, StringFormat=C}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="Edit" Click="EditButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0"/>
+            <Button Content="Delete" Click="DeleteButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0"/>
+            <TextBlock x:Name="StatusTextBlock" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Page>
+

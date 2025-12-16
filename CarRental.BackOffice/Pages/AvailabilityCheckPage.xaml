@@ -1,0 +1,37 @@
+<Page x:Class="CarRental.BackOffice.Pages.AvailabilityCheckPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Availability Check">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="Vehicle Availability Check" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Start Date:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <DatePicker x:Name="StartDatePicker" Width="150" Margin="0,0,20,0"/>
+            <TextBlock Text="End Date:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <DatePicker x:Name="EndDatePicker" Width="150" Margin="0,0,20,0"/>
+            <Button Content="Check Availability" Click="CheckButton_Click" Padding="10,5"/>
+        </StackPanel>
+        
+        <DataGrid x:Name="AvailableVehiclesDataGrid" Grid.Row="2" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="License Plate" Binding="{Binding LicensePlate}" Width="120"/>
+                <DataGridTextColumn Header="Make" Binding="{Binding Make}" Width="100"/>
+                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="100"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding VehicleType.Name}" Width="100"/>
+                <DataGridTextColumn Header="Daily Rate" Binding="{Binding VehicleType.DailyRate, StringFormat=C}" Width="100"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
+

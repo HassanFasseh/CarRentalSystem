@@ -1,0 +1,34 @@
+<Page x:Class="CarRental.BackOffice.Pages.MaintenanceAlertsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Maintenance Alerts">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="Maintenance Alerts" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Days since last service:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBox x:Name="DaysTextBox" Width="100" Text="90" Margin="0,0,20,0"/>
+            <Button Content="Check Maintenance" Click="CheckButton_Click" Padding="10,5"/>
+        </StackPanel>
+        
+        <DataGrid x:Name="MaintenanceDataGrid" Grid.Row="2" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="License Plate" Binding="{Binding LicensePlate}" Width="120"/>
+                <DataGridTextColumn Header="Make" Binding="{Binding Make}" Width="100"/>
+                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="100"/>
+                <DataGridTextColumn Header="Last Service" Binding="{Binding LastServiceDate, StringFormat=yyyy-MM-dd}" Width="120"/>
+                <DataGridTextColumn Header="Days Since Service" Binding="{Binding DaysSinceService}" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
+

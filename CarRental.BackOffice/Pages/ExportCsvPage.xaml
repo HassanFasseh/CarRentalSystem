@@ -1,0 +1,23 @@
+<Page x:Class="CarRental.BackOffice.Pages.ExportCsvPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Export CSV">
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBlock Text="Export Data to CSV" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+            
+            <TextBlock Text="Select data to export:" Margin="0,0,0,10"/>
+            <ComboBox x:Name="DataTypeComboBox" Margin="0,0,0,20" Padding="5">
+                <ComboBoxItem Content="Clients" IsSelected="True"/>
+                <ComboBoxItem Content="Vehicles"/>
+                <ComboBoxItem Content="Rentals"/>
+                <ComboBoxItem Content="Payments"/>
+            </ComboBox>
+            
+            <Button Content="Export to CSV" Click="ExportButton_Click" Padding="10,5" Width="150" HorizontalAlignment="Left"/>
+            
+            <TextBlock x:Name="StatusTextBlock" Margin="0,20,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+    </Grid>
+</Page>
+

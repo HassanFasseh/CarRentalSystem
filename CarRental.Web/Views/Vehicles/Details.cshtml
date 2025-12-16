@@ -1,0 +1,73 @@
+@model CarRental.Domain.Entities.Vehicle
+@{
+    ViewData["Title"] = "Vehicle Details";
+    bool isLoggedIn = ViewBag.IsLoggedIn == true;
+}
+
+<h2>Vehicle Details</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">Make:</dt>
+            <dd class="col-sm-8">@Model.Make</dd>
+
+            <dt class="col-sm-4">Model:</dt>
+            <dd class="col-sm-8">@Model.Model</dd>
+
+            <dt class="col-sm-4">Year:</dt>
+            <dd class="col-sm-8">@Model.Year</dd>
+
+            <dt class="col-sm-4">Type:</dt>
+            <dd class="col-sm-8">@Model.VehicleType?.Name</dd>
+
+            <dt class="col-sm-4">Color:</dt>
+            <dd class="col-sm-8">@Model.Color</dd>
+
+            <dt class="col-sm-4">License Plate:</dt>
+            <dd class="col-sm-8">@Model.LicensePlate</dd>
+
+            <dt class="col-sm-4">Mileage:</dt>
+            <dd class="col-sm-8">@Model.Mileage.ToString("N0") miles</dd>
+
+            <dt class="col-sm-4">Daily Rate:</dt>
+            <dd class="col-sm-8"><strong class="text-primary">@Model.VehicleType?.DailyRate.ToString("C")</strong></dd>
+
+            <dt class="col-sm-4">Status:</dt>
+            <dd class="col-sm-8">
+                @if (Model.Status == CarRental.Domain.Enums.VehicleStatus.Available)
+                {
+                    <span class="badge bg-success">Available</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning">@Model.Status</span>
+                }
+            </dd>
+        </dl>
+
+        @if (Model.Status == CarRental.Domain.Enums.VehicleStatus.Available)
+        {
+            @if (isLoggedIn)
+            {
+                <a asp-controller="Rentals" asp-action="RequestRental" asp-route-vehicleId="@Model.Id" class="btn btn-primary btn-lg">Request Rental</a>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <p>Please <a asp-controller="Account" asp-action="Login">login</a> or <a asp-controller="Account" asp-action="Register">register</a> to request a rental.</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                <p>This vehicle is currently not available for rental.</p>
+            </div>
+        }
+
+        <a asp-action="Index" class="btn btn-secondary">Back to Vehicles</a>
+    </div>
+</div>
+

@@ -1,0 +1,44 @@
+<Page x:Class="CarRental.BackOffice.Pages.RentalsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Rentals">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Rentals Management" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Add New Rental" Click="AddButton_Click" Margin="20,0,0,0" Padding="10,5"/>
+            <Button Content="Refresh" Click="RefreshButton_Click" Margin="10,0,0,0" Padding="10,5"/>
+            <Button Content="Generate PDF" Click="GeneratePdfButton_Click" Margin="10,0,0,0" Padding="10,5"/>
+            <Button Content="Generate QR Code" Click="GenerateQrCodeButton_Click" Margin="10,0,0,0" Padding="10,5"/>
+        </StackPanel>
+        
+        <DataGrid x:Name="RentalsDataGrid" Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  SelectionChanged="RentalsDataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="Client" Binding="{Binding Client.FirstName}" Width="100"/>
+                <DataGridTextColumn Header="Vehicle" Binding="{Binding Vehicle.LicensePlate}" Width="100"/>
+                <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat=yyyy-MM-dd}" Width="100"/>
+                <DataGridTextColumn Header="End Date" Binding="{Binding EndDate, StringFormat=yyyy-MM-dd}" Width="100"/>
+                <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat=C}" Width="100"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="Edit" Click="EditButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0"/>
+            <Button Content="Approve" Click="ApproveButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0" Background="LightGreen"/>
+            <Button Content="Deny" Click="DenyButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0" Background="LightCoral"/>
+            <Button Content="Delete" Click="DeleteButton_Click" Padding="10,5" Width="100" Margin="0,0,10,0"/>
+            <TextBlock x:Name="StatusTextBlock" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Page>
+

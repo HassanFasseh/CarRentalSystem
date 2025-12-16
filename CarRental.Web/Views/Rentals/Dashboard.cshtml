@@ -1,0 +1,90 @@
+@model List<CarRental.Domain.Entities.Rental>
+@{
+    ViewData["Title"] = "My Rentals";
+    var clientName = ViewBag.ClientName as string ?? "Client";
+}
+
+<h2>My Rentals Dashboard</h2>
+<hr />
+
+<div class="mb-4">
+    <p class="lead">Welcome, @clientName! Here are all your rental requests.</p>
+</div>
+
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Rental ID</th>
+                    <th>Vehicle</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Days</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rental in Model)
+                {
+                    <tr>
+                        <td>#@rental.Id</td>
+                        <td>
+                            @rental.Vehicle?.Make @rental.Vehicle?.Model<br/>
+                            <small class="text-muted">@rental.Vehicle?.LicensePlate</small>
+                        </td>
+                        <td>@rental.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@rental.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td>@rental.NumberOfDays</td>
+                        <td><strong>@rental.TotalAmount.ToString("C")</strong></td>
+                        <td>
+                            @if (rental.Status == CarRental.Domain.Enums.RentalStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Pending Approval</span>
+                            }
+                            else if (rental.Status == CarRental.Domain.Enums.RentalStatus.Active)
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else if (rental.Status == CarRental.Domain.Enums.RentalStatus.Denied)
+                            {
+                                <span class="badge bg-danger">Denied</span>
+                            }
+                            else if (rental.Status == CarRental.Domain.Enums.RentalStatus.Completed)
+                            {
+                                <span class="badge bg-info">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@rental.Status</span>
+                            }
+                        </td>
+                        <td>
+                            @if (rental.Status == CarRental.Domain.Enums.RentalStatus.Active || 
+                                 rental.Status == CarRental.Domain.Enums.RentalStatus.Completed)
+                            {
+                                <a asp-action="DownloadPdf" asp-route-id="@rental.Id" class="btn btn-sm btn-primary">Download PDF</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <h5>No rentals found</h5>
+        <p>You haven't made any rental requests yet. <a asp-controller="Vehicles" asp-action="Index">Browse vehicles</a> to make your first rental request!</p>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Vehicles" asp-action="Index" class="btn btn-primary">Browse Vehicles</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+</div>
+
