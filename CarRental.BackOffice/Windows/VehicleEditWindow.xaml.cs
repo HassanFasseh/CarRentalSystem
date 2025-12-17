@@ -30,7 +30,6 @@ public partial class VehicleEditWindow : Window
             MakeTextBox.Text = _vehicle.Make;
             ModelTextBox.Text = _vehicle.Model;
             YearTextBox.Text = _vehicle.Year.ToString();
-            ColorTextBox.Text = _vehicle.Color;
             MileageTextBox.Text = _vehicle.Mileage.ToString();
             
             var vehicleType = VehicleTypeComboBox.Items.Cast<VehicleType>()
@@ -40,12 +39,14 @@ public partial class VehicleEditWindow : Window
                 VehicleTypeComboBox.SelectedItem = vehicleType;
             }
             
-            StatusComboBox.SelectedItem = _vehicle.Status;
-            
-            if (_vehicle.LastServiceDate.HasValue)
+            // Find matching status in the combobox items
+            var statuses = StatusComboBox.ItemsSource.Cast<VehicleStatus>();
+            var matchingStatus = statuses.FirstOrDefault(s => s == _vehicle.Status);
+            if (matchingStatus != null)
             {
-                LastServiceDatePicker.SelectedDate = _vehicle.LastServiceDate.Value;
+                StatusComboBox.SelectedItem = matchingStatus;
             }
+            
         }
         else
         {
@@ -64,7 +65,8 @@ public partial class VehicleEditWindow : Window
 
     private void LoadStatuses()
     {
-        StatusComboBox.ItemsSource = Enum.GetValues(typeof(VehicleStatus));
+        var statuses = Enum.GetValues(typeof(VehicleStatus)).Cast<VehicleStatus>().ToList();
+        StatusComboBox.ItemsSource = statuses;
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -72,6 +74,13 @@ public partial class VehicleEditWindow : Window
         if (VehicleTypeComboBox.SelectedItem == null)
         {
             MessageBox.Show("Please select a vehicle type.", "Validation Error", 
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        if (StatusComboBox.SelectedItem == null)
+        {
+            MessageBox.Show("Please select a status.", "Validation Error", 
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
@@ -108,10 +117,10 @@ public partial class VehicleEditWindow : Window
                 Make = MakeTextBox.Text.Trim(),
                 Model = ModelTextBox.Text.Trim(),
                 Year = year,
-                Color = ColorTextBox.Text.Trim(),
+                Color = string.Empty, // Color will be set separately if needed
                 Status = (VehicleStatus)StatusComboBox.SelectedItem,
                 Mileage = mileage,
-                LastServiceDate = LastServiceDatePicker.SelectedDate,
+                LastServiceDate = null,
                 CreatedAt = DateTime.Now
             };
             
@@ -119,22 +128,37 @@ public partial class VehicleEditWindow : Window
         }
         else
         {
-            _vehicle.VehicleTypeId = ((VehicleType)VehicleTypeComboBox.SelectedItem).Id;
-            _vehicle.LicensePlate = LicensePlateTextBox.Text.Trim();
-            _vehicle.Make = MakeTextBox.Text.Trim();
-            _vehicle.Model = ModelTextBox.Text.Trim();
-            _vehicle.Year = year;
-            _vehicle.Color = ColorTextBox.Text.Trim();
-            _vehicle.Status = (VehicleStatus)StatusComboBox.SelectedItem;
-            _vehicle.Mileage = mileage;
-            _vehicle.LastServiceDate = LastServiceDatePicker.SelectedDate;
+            // Reload vehicle from current context to avoid tracking issues
+            var vehicleToUpdate = context.Vehicles.Find(_vehicle.Id);
+            if (vehicleToUpdate == null)
+            {
+                MessageBox.Show("Vehicle not found in database.", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             
-            context.Vehicles.Update(_vehicle);
+            vehicleToUpdate.VehicleTypeId = ((VehicleType)VehicleTypeComboBox.SelectedItem).Id;
+            vehicleToUpdate.LicensePlate = LicensePlateTextBox.Text.Trim();
+            vehicleToUpdate.Make = MakeTextBox.Text.Trim();
+            vehicleToUpdate.Model = ModelTextBox.Text.Trim();
+            vehicleToUpdate.Year = year;
+            // Color remains unchanged
+            vehicleToUpdate.Status = (VehicleStatus)StatusComboBox.SelectedItem;
+            vehicleToUpdate.Mileage = mileage;
+            // LastServiceDate remains unchanged
         }
 
-        context.SaveChanges();
-        DialogResult = true;
-        Close();
+        try
+        {
+            context.SaveChanges();
+            DialogResult = true;
+            Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving vehicle: {ex.Message}", "Error", 
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)

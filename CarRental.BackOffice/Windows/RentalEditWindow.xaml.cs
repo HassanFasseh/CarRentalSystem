@@ -140,16 +140,23 @@ public partial class RentalEditWindow : Window
         }
         else
         {
-            _rental.ClientId = ((Client)ClientComboBox.SelectedItem).Id;
-            _rental.VehicleId = ((Vehicle)VehicleComboBox.SelectedItem).Id;
-            _rental.StartDate = startDate;
-            _rental.EndDate = endDate;
-            _rental.NumberOfDays = numberOfDays;
-            _rental.DailyRate = dailyRate;
-            _rental.TotalAmount = totalAmount;
-            _rental.Status = (RentalStatus)StatusComboBox.SelectedItem;
+            // Reload rental from current context to avoid tracking issues
+            var rentalToUpdate = context.Rentals.Find(_rental.Id);
+            if (rentalToUpdate == null)
+            {
+                MessageBox.Show("Rental not found in database.", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             
-            context.Rentals.Update(_rental);
+            rentalToUpdate.ClientId = ((Client)ClientComboBox.SelectedItem).Id;
+            rentalToUpdate.VehicleId = ((Vehicle)VehicleComboBox.SelectedItem).Id;
+            rentalToUpdate.StartDate = startDate;
+            rentalToUpdate.EndDate = endDate;
+            rentalToUpdate.NumberOfDays = numberOfDays;
+            rentalToUpdate.DailyRate = dailyRate;
+            rentalToUpdate.TotalAmount = totalAmount;
+            rentalToUpdate.Status = (RentalStatus)StatusComboBox.SelectedItem;
         }
 
         context.SaveChanges();

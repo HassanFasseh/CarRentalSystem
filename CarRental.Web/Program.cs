@@ -31,17 +31,22 @@ builder.Services.AddScoped<PdfService>();
 var app = builder.Build();
 
 // Initialize database on startup
-// This ensures the database exists and has seed data
+// This ensures the database exists and migrations are applied
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     try
     {
         context.Database.Migrate();
-        SeedData.SeedDatabase(context);
     }
-    catch
+    catch (Exception ex)
     {
+        // Log the error in development
+        if (app.Environment.IsDevelopment())
+        {
+            Console.WriteLine($"Database initialization error: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
         // Database might already exist, that's okay
     }
 }

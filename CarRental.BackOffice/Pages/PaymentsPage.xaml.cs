@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,18 +20,35 @@ public partial class PaymentsPage : Page
     {
         InitializeComponent();
         _databaseService = databaseService;
+        Loaded += PaymentsPage_Loaded;
+    }
+
+    private void PaymentsPage_Loaded(object sender, RoutedEventArgs e)
+    {
         LoadPayments();
     }
 
     private void LoadPayments()
     {
-        using var context = _databaseService.GetContext();
-        var payments = context.Payments
-            .Include(p => p.Rental)
-            .ToList();
-        
-        PaymentsDataGrid.ItemsSource = payments;
-        StatusTextBlock.Text = $"Total payments: {payments.Count}";
+        try
+        {
+            using var context = _databaseService.GetContext();
+            var payments = context.Payments
+                .Include(p => p.Rental)
+                .OrderByDescending(p => p.PaymentDate)
+                .ToList();
+            
+            PaymentsDataGrid.ItemsSource = null;
+            PaymentsDataGrid.ItemsSource = payments;
+            StatusTextBlock.Text = $"Total payments: {payments.Count}";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading payments: {ex.Message}", "Error", 
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            StatusTextBlock.Text = "Error loading payments";
+            PaymentsDataGrid.ItemsSource = null;
+        }
     }
 
     private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -75,12 +93,24 @@ public partial class PaymentsPage : Page
 
         if (result == MessageBoxResult.Yes)
         {
-            using var context = _databaseService.GetContext();
-            context.Payments.Remove(_selectedPayment);
-            context.SaveChanges();
-            LoadPayments();
-            MessageBox.Show("Payment deleted successfully.", "Success", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                using var context = _databaseService.GetContext();
+                var paymentToDelete = context.Payments.Find(_selectedPayment.Id);
+                if (paymentToDelete != null)
+                {
+                    context.Payments.Remove(paymentToDelete);
+                    context.SaveChanges();
+                    LoadPayments();
+                    MessageBox.Show("Payment deleted successfully.", "Success", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting payment: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

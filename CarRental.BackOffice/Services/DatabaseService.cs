@@ -45,9 +45,6 @@ public class DatabaseService
             // If migrations fail, try to create the database
             context.Database.EnsureCreated();
         }
-        
-        // Seed the database with initial data
-        SeedData.SeedDatabase(context);
     }
 
     // This method disposes the context when done
